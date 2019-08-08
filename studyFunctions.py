@@ -1,4 +1,4 @@
-#This function processes raw biomass data and returns upper and lower bounds to 
+#This function processes raw biomass data and returns upper and lower bounds to
 #be used in constraint scanning as done by Colombie et al 2015
 #
 #
@@ -197,7 +197,7 @@ def generateBoundsFromBiomass(datafile="/home/sanu/ColobieDataRaw.csv",met="sucr
     plt.ylabel("Flux (micromol/fruit/day)")
     plt.legend(bbox_to_anchor=(2.55, 1),fontsize=15)
     plt.show()
-  
+
   return (conc,conc_max,conc_min,rate_max,rate_min)
 
 
@@ -208,11 +208,11 @@ def removeCopyTag(ID):
 
 
 #Function to plot biomass accumulation rates as barplots with upper and lower bo-
-#-unds as the upper and lower ends of the y-axis 
+#-unds as the upper and lower ends of the y-axis
 #
 #args: 1) a list of reaction objects
 #output: a plot
-def plotMetabAccumulationRates(rxnlist):    
+def plotMetabAccumulationRates(rxnlist):
   cols = 6
   import matplotlib.pyplot as plt
   plt.rcParams.update({'font.size': 20}) #sets a global fontsize
@@ -222,11 +222,11 @@ def plotMetabAccumulationRates(rxnlist):
   plt.rcParams['ytick.major.width'] = 1
   plt.rcParams['axes.linewidth']=3 # makes axes line thicker
   plt.figure(figsize=(20,10))
-  
+
   rows = int(len(rxnlist)/cols)
   if len(rxnlist)%cols != 0:
     rows=rows+1
-    
+
   i=0
   for rxn in rxnlist:
     i=i+1
@@ -237,7 +237,7 @@ def plotMetabAccumulationRates(rxnlist):
     ax.set_title(rxn.name.replace("Biomass_",""))
     ax.set_xticks([])
     ax.axhline(y=0,color="grey")
-  
+
   plt.tight_layout()
   plt.show()
 
@@ -254,12 +254,12 @@ def convertToClassicalModel(cobra_model2,comp="*",updateCharges=""):
             charge = line.replace("\n","").split("\t")[1]
             ChargeDict[met]=charge
         fin.close()
-    
+
         temp=cobra_model2.copy()
         for met in temp.metabolites:
             if(met.compartment=="b"):
                 cobra_model2.metabolites.get_by_id(met.id).remove_from_model()
-        
+
         for met in cobra_model2.metabolites:
             tempMet=met.id
             if(["1","2","3","4","5","6","7","8","9"].__contains__(met.id[len(met.id)-1])):
@@ -270,7 +270,7 @@ def convertToClassicalModel(cobra_model2,comp="*",updateCharges=""):
                 met.charge = ChargeDict.get(tempMet)
             if met.charge is None:
                 met.charge=0
-    
+
     import re
     #List metabolites that were added
     fractionMets=set()
@@ -291,7 +291,7 @@ def convertToClassicalModel(cobra_model2,comp="*",updateCharges=""):
                 else:
                     fractionMets.add(met.id)
     cobra_model = cobra_model2.copy()
-    
+
     for met in fractionMets:
         for rxn in cobra_model.metabolites.get_by_id(met).reactions:
             #print rxn.id
@@ -309,7 +309,7 @@ def convertToClassicalModel(cobra_model2,comp="*",updateCharges=""):
             #print(met)
             #if(rxn.id=="Protein_Processing_c1"):
                 #print rxn.reaction
-            
+
             coeff1 = rxn.metabolites.get(cobra_model.metabolites.get_by_id(met[len(prefix):]))
             rxn.add_metabolites({cobra_model.metabolites.get_by_id(met[len(prefix):]):-1*coeff1})
             coeff2 = rxn.metabolites.get(cobra_model.metabolites.get_by_id(met))
@@ -319,7 +319,7 @@ def convertToClassicalModel(cobra_model2,comp="*",updateCharges=""):
                 compSet = set()
                 for m in rxn.metabolites:
                     compSet.add(m.compartment)
-                this = cobra_model.metabolites.get_by_id(met).compartment 
+                this = cobra_model.metabolites.get_by_id(met).compartment
                 #print this
                 rxn.add_metabolites({cobra_model.metabolites.get_by_id(met[len(prefix):]):coeff1+coeff2,cobra_model.metabolites.get_by_id("PROTON_"+cobra_model.metabolites.get_by_id(met).compartment):round(Charge,4)})
                 other = compSet.difference(this)
@@ -330,23 +330,23 @@ def convertToClassicalModel(cobra_model2,comp="*",updateCharges=""):
                         if prot_bal > 0:
                             tempCoeff = rxn.metabolites.get(cobra_model.metabolites.get_by_id("PROTON_"+c))
                             rxn.add_metabolites({cobra_model.metabolites.get_by_id("PROTON_"+c):-1*tempCoeff})
-                            
+
                             tempCoeff = rxn.metabolites.get(cobra_model.metabolites.get_by_id("PROTON_"+this))
                             rxn.add_metabolites({cobra_model.metabolites.get_by_id("PROTON_"+this):-1*tempCoeff})
-                            
+
                             rxn.add_metabolites({cobra_model.metabolites.get_by_id("PROTON_"+c):prot_bal})
                         elif prot_bal < 0:
                             tempCoeff = rxn.metabolites.get(cobra_model.metabolites.get_by_id("PROTON_"+c))
                             rxn.add_metabolites({cobra_model.metabolites.get_by_id("PROTON_"+c):-1*tempCoeff})
-                            
+
                             tempCoeff = rxn.metabolites.get(cobra_model.metabolites.get_by_id("PROTON_"+this))
                             rxn.add_metabolites({cobra_model.metabolites.get_by_id("PROTON_"+this):-1*tempCoeff})
-                            
+
                             rxn.add_metabolites({cobra_model.metabolites.get_by_id("PROTON_"+c):prot_bal})
                         else:
                             tempCoeff = rxn.metabolites.get(cobra_model.metabolites.get_by_id("PROTON_"+c))
                             rxn.add_metabolites({cobra_model.metabolites.get_by_id("PROTON_"+c):-1*tempCoeff})
-                            
+
                             tempCoeff = rxn.metabolites.get(cobra_model.metabolites.get_by_id("PROTON_"+this))
                             rxn.add_metabolites({cobra_model.metabolites.get_by_id("PROTON_"+this):-1*tempCoeff})
             else:
@@ -544,7 +544,7 @@ def estimateVcellmembrane(T):
     Vcell = estimateVcell(T)
     a=Vcell**(1.0/3)
     #cell wall thickness = 100 nm according to figure 19-68, https://www.ncbi.nlm.nih.gov/books/NBK26928/
-    b=100*(10**-9)	
+    b=100*(10**-9)
     #cell membrane thickness = 10 nm according to https://hypertextbook.com/facts/2001/JenniferShloming.shtml (see Hine, Robert. "Membrane." The Facts on File Dictionary of Biology. 3rd ed. New York: Checkmark, 1999: 198.)
     #c = 10*(10**-9)				#unit = m
     #cell membrane thickness = 4 nm BioNumbers
@@ -572,7 +572,7 @@ def phospholipidDemandFlux(t,Ncells=0,unit_time=1,scaling_factor=1):
     z = phospholipidLevels(t,Ncells,scaling_factor)-phospholipidLevels(t-unit_time,Ncells,scaling_factor)	#unit = mmol/fruit/unit_time
     return z
 
-#Estimate total cytosolic volume 
+#Estimate total cytosolic volume
 def estimateVcyt(T,Ncell=0,hollow=False):
     import math
     j = T*24*60
@@ -638,7 +638,7 @@ def estimateLycopeneDemand(DPA,unit_time):
 def estimatePhytolDemand(DPA,unit_time):
     return estimatePhytol(DPA) - estimatePhytol(DPA-unit_time)
 
-#Estimate fruit C content 
+#Estimate fruit C content
 def estimateCcontent(T,hollow=False):
     y = (0.03617391*(estimateVpericarp(T,hollow)/estimateVpericarp(59,hollow))*100)+0.18173913
     return y
@@ -652,13 +652,13 @@ def estimatePhloemUptakeConstraint(Ccont):
     return y			# mgC/fruit/hr
 
 #Function to convert any model with reversible reactions to a copy of the same m-
-#-odel with only irreversible reactions. ID of reverse reactions are generated by 
+#-odel with only irreversible reactions. ID of reverse reactions are generated by
 #suffixing "_reverse" to the ID of the orignal reaction.
 #args: 1) a cobra model
 #output: a cobra model with only irreversible reactions
 def rev2irrev(cobra_model):
   exp_model=cobra_model.copy()
-  
+
   for RXN in cobra_model.reactions:
     rxn=exp_model.reactions.get_by_id(RXN.id)
     if (rxn.lower_bound < 0):
@@ -667,7 +667,7 @@ def rev2irrev(cobra_model):
       rxn.lower_bound = 0
       rxn_reverse.upper_bound = 0
       exp_model.add_reaction(rxn_reverse)
-  
+
   return exp_model
 
 
@@ -677,7 +677,7 @@ def rev2irrev(cobra_model):
 #-nt, 3) the float value that sum of fluxes must be constrained to & 4) value obj-
 #-ective function needs to be constraint to (provide "" to avoid constraining obj-
 #ective function)
-#output: a cobra model with sum of fluxes constrained to 
+#output: a cobra model with sum of fluxes constrained to
 def constrainSumOfFluxes(cobra_model, rxn2avoid,SFvalue,objvalue):
   temp=cobra_model.copy()
   SFMet = Metabolite("SFMet",name="Sum of fluxes pseudometabolite",compartment="c2")
@@ -904,13 +904,13 @@ def FBA_FVA_run(cobra_model,obj,rxn2avoid = [],rxnlist=[],solver="",weightings={
 
 
 #Function to convert any model with reversible reactions to a copy of the same m-
-#-odel with only irreversible reactions. ID of reverse reactions are generated by 
+#-odel with only irreversible reactions. ID of reverse reactions are generated by
 #suffixing "_reverse" to the ID of the orignal reaction.
 #args: 1) a cobra model
 #output: a cobra model with only irreversible reactions
 def rev2irrev(cobra_model):
   exp_model=cobra_model.copy()
-  
+
   for RXN in cobra_model.reactions:
     rxn=exp_model.reactions.get_by_id(RXN.id)
     if (rxn.lower_bound < 0):
@@ -919,7 +919,7 @@ def rev2irrev(cobra_model):
       rxn.lower_bound = 0
       rxn_reverse.upper_bound = 0
       exp_model.add_reaction(rxn_reverse)
-  
+
   return exp_model
 
 
@@ -928,10 +928,10 @@ def rev2irrev(cobra_model):
 #-nt, 3) the float value that sum of fluxes must be constrained to & 4) value obj-
 #-ective function needs to be constraint to (provide "" to avoid constraining obj-
 #ective function) 5) Flux weightings
-#output: a cobra model with sum of fluxes constrained to 
+#output: a cobra model with sum of fluxes constrained to
 def constrainSumOfFluxes(cobra_model, rxn2avoid,SFvalue,objvalue,weightings):
   from cobra.core import Metabolite, Reaction
-  
+
   temp=cobra_model.copy()
   SFMet = Metabolite("SFMet",name="Sum of fluxes pseudometabolite",compartment="c2")
   for rxn in cobra_model.reactions:
@@ -1325,3 +1325,52 @@ def writeSolutionFluxesToFile(sol,outfile,model):
     df = df[['ID','EC number', 'reaction', 'flux']]
     df.to_csv(outfile)
     return
+
+
+def setupMultiphaseModel(model,phases,transferMets):
+    from cobra.core import Metabolite, Reaction
+    import re
+
+    if phases < 2:
+        print "error: number of phases specified is less than 2"
+        return
+
+    #if a reaction is A <- B, remake it as B -> A
+    for rxn in model.reactions:
+        if rxn.lower_bound < 0 and rxn.upper_bound == 0:
+            lb = rxn.lower_bound
+            for met in rxn.metabolites:
+                coeff = rxn.metabolites.get(met)
+                rxn.add_metabolites({met:-2*coeff})
+                rxn.lower_bound = 0
+                rxn.upper_bound = lb
+
+
+    modelDict = dict()
+    #create a copy of all model elements for each phase
+    for i in range(1,phases+1):
+        temp_model = model.copy()
+        for met in temp_model.metabolites:
+            met.id = met.id+str(i)
+            met.compartment = met.compartment+str(i)
+        for rxn in temp_model.reactions:
+            rxn.id = rxn.id+str(i)
+        modelDict[i] = temp_model
+        if i==1:
+            final_model = temp_model.copy()
+        else:
+            final_model = final_model+temp_model
+            #add metabolites that might have been missed
+            for met in temp_model.metabolites:
+                if not final_model.metabolites.__contains__(met.id):
+                    final_model.add_metabolites(met.copy())
+
+    #add representation of phloem
+    for i in range(1,phases+1):
+        rxn = final_model.reactions.get_by_id("Phloem_output_tx"+str(i))
+        met = Metabolite("X_Phloem_contribution_t"+str(i),
+                         name="X_Phloem_contribution[t]",
+                         compartment="t"+str(i))
+        rxn.add_metabolites({met:1})
+
+    return final_model
