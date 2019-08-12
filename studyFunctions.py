@@ -834,10 +834,10 @@ def FBA_FVA_run(cobra_model,obj,rxn2avoid = [],rxnlist=[],solver="",weightings={
           return
   print("Runing pFBA")
   solution = pfba_Weighted(cobra_model,weightings)
-  objvalue = solution.x_dict.get(obj.id)
+  objvalue = solution.fluxes.get(obj.id)
   a = 0
   for i in cobra_model.reactions:
-    a = a + abs(solution.x_dict.get(i.id)*weightings[i.id])
+    a = a + abs(solution.fluxes.get(i.id)*weightings[i.id])
 
   sumOfFluxes = a
 
@@ -1228,16 +1228,16 @@ def generateFluxMap(cobra_model,solution, outfile,phases = 2):
             #add the reaction we are about to process to the reactions processed list
             for i in range(1,phases+1):
                 rxnSet.add(RXN+str(i))
-                if(round(float(solution.x_dict.get(RXN+str(i)))*10000000) == 0):
+                if(round(float(solution.fluxes.get(RXN+str(i)))*10000000) == 0):
                     tempvalue.append(0)
                     temp1.append("none")
                     temp2.append("none")
-                elif(float(solution.x_dict.get(RXN+str(i)))*10000 > 0):
-                    tempvalue.append(solution.x_dict.get(RXN+str(i)))
+                elif(float(solution.fluxes.get(RXN+str(i)))*10000 > 0):
+                    tempvalue.append(solution.fluxes.get(RXN+str(i)))
                     temp1.append("produced")
                     temp2.append("consumed")
-                elif(float(solution.x_dict.get(RXN+str(i)))*10000 < 0):
-                    tempvalue.append(solution.x_dict.get(RXN+str(i)))
+                elif(float(solution.fluxes.get(RXN+str(i)))*10000 < 0):
+                    tempvalue.append(solution.fluxes.get(RXN+str(i)))
                     temp1.append("consumed")
                     temp2.append("produced")
             values[RXN] = tempvalue
@@ -1278,16 +1278,16 @@ def generateFluxMap(cobra_model,solution, outfile,phases = 2):
         else:
             #add the reaction we are about to process to the reactions processed list
             rxnSet.add(RXN)
-            if(round(float(solution.x_dict.get(rxn.id))*10000000) == 0):
+            if(round(float(solution.fluxes.get(rxn.id))*10000000) == 0):
                 value = 0;
                 status1= "none";
                 status0= "none";
-            elif(solution.x_dict.get(rxn.id)*10000 > 0):
-                value = solution.x_dict.get(rxn.id)*1000;
+            elif(solution.fluxes.get(rxn.id)*10000 > 0):
+                value = solution.fluxes.get(rxn.id)*1000;
                 status1= "produced";
                 status0= "consumed";
-            elif(solution.x_dict.get(rxn.id)*10000 < 0):
-                value = solution.x_dict.get(rxn.id)*1000;
+            elif(solution.fluxes.get(rxn.id)*10000 < 0):
+                value = solution.fluxes.get(rxn.id)*1000;
                 status1= "consumed";
                 status0= "produced";
 
@@ -1320,7 +1320,7 @@ def writeSolutionFluxesToFile(sol,outfile,model):
             EClist.append("")
         else:
             EClist.append(rxn.notes.get("PROTEIN CLASS")[0])
-        fluxList.append(sol.x_dict.get(rxn.id))
+        fluxList.append(sol.fluxes.get(rxn.id))
     df = pd.DataFrame(data={"ID":rxnList,"EC number":EClist,"reaction":eqnList,"flux":fluxList})
     df = df[['ID','EC number', 'reaction', 'flux']]
     df.to_csv(outfile)
