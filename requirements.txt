@@ -3,3 +3,4 @@ python-libsbml
 matplotlib
 scipy
 xlrd
+brokenaxes
