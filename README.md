@@ -3,8 +3,11 @@ DOI:[10.1101/731232](https://doi.org/10.1101/731232)
 
 Scripts used in the study has been presented in Jupyter notebooks.
 
+To run the scripts remotely without any installation, click on the binder icon below  
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/ljs1002/Shameer-et-al-Predicting-metabolism-during-growth-by-osmotic-cell-expansion/binder_version)  
+  
+ 
 ## Index  
---------- 
 - Script1.ipynb - Validating equations 3,4 and 5 used to estimate cellulose, phospholipid and protein content in expanding pericarp cells respectively (Figure 2).
 - Script2.ipynb - Modelling metabolism in dividing and expanding cells. (Figure 3)
 - Script3.ipynb - Processing data form Rontein et al 2002
