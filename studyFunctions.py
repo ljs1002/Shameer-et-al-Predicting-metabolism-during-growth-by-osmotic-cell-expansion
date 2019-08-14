@@ -854,6 +854,8 @@ def FBA_FVA_run(cobra_model,obj,rxn2avoid = [],rxnlist=[],solver="",weightings={
         rxnlist2.append(sfmodel.reactions.get_by_id(rxn.id+"_reverse"))
       rxnlist2.append(sfmodel.reactions.get_by_id(rxn.id))
   #print("Rxn list ="+str(rxnlist2))
+  tempsol = sfmodel.optimize()
+  print(tempsol.fluxes.get(obj.id))
   print("Running FVA")
 
   if solver != "":
@@ -1374,3 +1376,199 @@ def setupMultiphaseModel(model,phases,transferMets):
         rxn.add_metabolites({met:1})
 
     return final_model
+
+
+def plotOsmoticContent(cobra_model2,SOL):
+    '''
+    This function plots osmotic content of the 10-phase developing tomato fruit
+    model
+    Inputs:1) cobra model 2) solution object
+    Outputs:
+    '''
+    import matplotlib.pyplot as plt
+    from matplotlib.ticker import MultipleLocator
+    import numpy as np
+    plt.rcParams.update({'font.size': 15}) #sets a global fontsize
+    plt.rcParams['xtick.major.size'] = 5 # adjusts tick line length and width
+    plt.rcParams['xtick.major.width'] = 1
+    plt.rcParams['ytick.major.size'] = 5
+    plt.rcParams['ytick.major.width'] = 1
+    plt.rcParams['axes.linewidth'] = 3 # makes axes line thicker
+    plt.figure(figsize=(6,8))
+
+    ax1 = plt.subplot(1,1,1)
+
+    xlist = list()
+    ylist = list()
+    y2list = list()
+    y3list = list()
+    y4list = list()
+    y5list = list()
+    y6list = list()
+    y7list = list()
+    y8list = list()
+    y9list = list()
+    y10list = list()
+    y11list = list()
+    y12list = list()
+    y13list = list()
+    y14list = list()
+    for i in range(1,11):
+        xlist.append(DPA[i])
+        met = cobra_model2.metabolites.get_by_id("WCO_"+str(i))
+        rxn = cobra_model2.reactions.get_by_id("WCOsetter_tx"+str(i))
+        #print(rxn.x)
+        y1 = rxn.metabolites.get(met)*solution2.fluxes.get(rxn.id)*-1
+        ylist.append(y1)
+        y2 = 0
+        y3 = 0
+        y4 = 0
+        y5 = 0
+        y6 = 0
+        y7 = 0
+        y8 = 0
+        y9 = 0
+        y10 = 0
+        y11 = 0
+        y12 = 0
+        y13 = 0
+        y14 = 0
+        for s in ["VO"]:
+            for r in cobra_model2.metabolites.get_by_id(s+"_"+str(i)).reactions:
+                if r.metabolites.get(cobra_model2.metabolites.get_by_id(s+"_"+str(i))) > 0:
+                    y2 = y2 + (SOL.fluxes.get(r.id)*r.metabolites.get(cobra_model2.metabolites.get_by_id(s+"_"+str(i))))
+        y2list.append(y2)
+        for s in ["CO"]:
+            for r in cobra_model2.metabolites.get_by_id(s+"_"+str(i)).reactions:
+                if r.metabolites.get(cobra_model2.metabolites.get_by_id(s+"_"+str(i))) > 0:
+                    y3 = y3 + abs(SOL.fluxes.get(r.id)*r.metabolites.get(cobra_model2.metabolites.get_by_id(s+"_"+str(i))))
+        y3list.append(y2+y3)
+        for s in ["SUCROSE_v","GLC_v","FRU_v"]:
+            if i!=10:
+                rxn = cobra_model2.reactions.get_by_id(s+"_Transfer"+str(i)+str(i+1))
+                y4 = y4 + SOL.fluxes.get(rxn.id)
+            else:
+                rxn = cobra_model2.reactions.get_by_id("Biomass_"+s+"_tx10")
+                y4 = y4 + SOL.fluxes.get(rxn.id)
+        y4list.append(y4)
+        for s in ["SUCROSE_c","GLC_c","FRU_c"]:
+            if i!=10:
+                rxn = cobra_model2.reactions.get_by_id(s+"_Transfer"+str(i)+str(i+1))
+                y5 = y5 + SOL.fluxes.get(rxn.id)
+            else:
+                rxn = cobra_model2.reactions.get_by_id("Biomass_"+s+"_tx10")
+                y5 = y5 + SOL.fluxes.get(rxn.id)
+        y5list.append(y2+y5)
+        for s in ["MAL_v","CIT_v"]:
+            if i!=10:
+                rxn = cobra_model2.reactions.get_by_id(s+"_Transfer"+str(i)+str(i+1))
+                y6 = y6 + SOL.fluxes.get(rxn.id)
+            else:
+                rxn = cobra_model2.reactions.get_by_id("Biomass_"+s+"_tx10")
+                y6 = y6 + SOL.fluxes.get(rxn.id)
+        y6list.append(y4+y6)
+        for s in ["MAL_c","CIT_c"]:
+            if i!=10:
+                rxn = cobra_model2.reactions.get_by_id(s+"_Transfer"+str(i)+str(i+1))
+                y7 = y7 + SOL.fluxes.get(rxn.id)
+            else:
+                rxn = cobra_model2.reactions.get_by_id("Biomass_"+s+"_tx10")
+                y7 = y7 + SOL.fluxes.get(rxn.id)
+        y7list.append(y2+y5+y7)
+        for s in ["GLN","ASN","SER","GLY","THR","L_ALPHA_ALANINE","4_AMINO_BUTYRATE","VAL","ILE","PHE","LEU","LYS","ARG","L_ASPARTATE","GLT","bHIS","MET","PRO","TRP","TYR","CYS"]:
+            #if s == "GLN" or s=="LEU" or s=="CYS":
+            #    continue
+            if i!=10:
+                rxn = cobra_model2.reactions.get_by_id(s+"_v_Transfer"+str(i)+str(i+1))
+                y8 = y8 + SOL.fluxes.get(rxn.id)
+            else:
+                if s=="bHIS":
+                    s="HIS"
+                rxn = cobra_model2.reactions.get_by_id("Biomass_"+s+"_v_tx10")
+                y8 = y8 + SOL.fluxes.get(rxn.id)
+        y8list.append(y4+y6+y8)
+        for s in ["GLN","ASN","SER","GLY","THR","L_ALPHA_ALANINE","4_AMINO_BUTYRATE","VAL","ILE","PHE","LEU","LYS","ARG","L_ASPARTATE","GLT","HIS","MET","PRO","TRP","TYR","CYS"]:
+            #if s == "GLN" or s=="LEU" or s=="CYS":
+            #    continue
+            if i!=10:
+                rxn = cobra_model2.reactions.get_by_id(s+"_c_Transfer"+str(i)+str(i+1))
+                y9 = y9 + SOL.fluxes.get(rxn.id)
+            else:
+                rxn = cobra_model2.reactions.get_by_id("Biomass_"+s+"_c_tx10")
+                y9 = y9 + SOL.fluxes.get(rxn.id)
+        y9list.append(y2+y5+y7+y9)
+        for s in ["STARCH_p"]:
+            if i!=10:
+                rxn = cobra_model2.reactions.get_by_id(s+"_Transfer"+str(i)+str(i+1))
+                y10 = y10 + SOL.fluxes.get(rxn.id)
+            else:
+                #rxn = cobra_model2.reactions.get_by_id("Biomass_"+s+"_tx10")
+                #y10 = y10 + rxn.x
+                y10 = 0
+        y10list.append(y1+y10)
+        for s in ["KI_v","MGII_v","CAII_v","AMMONIUM_v"]:
+            if i!=10:
+                rxn = cobra_model2.reactions.get_by_id(s+"_Transfer"+str(i)+str(i+1))
+                y11 = y11 + SOL.fluxes.get(rxn.id)
+            else:
+                if s=="KI_v":
+                    y11 = y11 + SOL.fluxes.get("K_biomass10")
+                elif s=="MGII_v":
+                    y11 = y11 + SOL.fluxes.get("Mg_biomass10")
+                elif s=="CAII_v":
+                    y11 = y11 + SOL.fluxes.get("Ca_biomass10")
+                else:
+                    y11 = y11 + 0
+        y11list.append(y4+y6+y8+y11)
+        for s in ["KI","MGII","CAII"]:
+            if i!=10:
+                y12 = y12 + 0
+        #        rxn = cobra_model2.reactions.get_by_id(s+"_Transfer"+str(i)+str(i+1))
+        #        y12 = y12 + solution2.fluxes.get(rxn.id)
+            else:
+                y12 = y12 + SOL.fluxes.get(s+"_biomass_c10")
+        y12list.append(y2+y5+y7+y9+y12)
+        for s in ["NITRATE_v"]:
+            if i!=10:
+                rxn = cobra_model2.reactions.get_by_id(s+"_Transfer"+str(i)+str(i+1))
+                y13 = y13 + SOL.fluxes.get(rxn.id)
+            else:
+                y13 = y13 + SOL.fluxes.get("NITRATE_biomass10")
+        y13list.append(y4+y6+y8+y11+y13)
+        for s in ["NITRATE_c"]:
+            if i!=10:
+                y14 = y14 + 0
+                #rxn = cobra_model2.reactions.get_by_id(s+"_Transfer"+str(i)+str(i+1))
+                #y14 = y14 + solution2.fluxes.get(rxn.id)
+            else:
+                y14 = y14 + SOL.fluxes.get("NITRATE_biomass_c10")
+        y14list.append(y2+y5+y7+y9+y12+y14)
+
+
+    ax1.plot(xlist,y3list,"-",color="black")
+    ax1.plot(xlist,y2list,"--",color="black")
+    #ax1.fill_between(xlist,y2list,alpha=0.1,color="grey",label="vacuolar contribution",linewidth=0)
+    ax1.fill_between(xlist,y4list,alpha=0.3,color="blue",label="vac-SUG",hatch="//",linewidth=0)
+    ax1.fill_between(xlist,y4list,y6list,alpha=0.3,color="red",label="vac-OA",hatch="//",linewidth=0)
+    ax1.fill_between(xlist,y6list,y8list,alpha=0.3,color="green",label="vac-AA",hatch="//",linewidth=0)
+    ax1.fill_between(xlist,y8list,y11list,alpha=0.3,color="purple",label="vac-Cation",hatch="//",linewidth=0)
+    ax1.fill_between(xlist,y11list,y13list,alpha=0.3,color="magenta",label="vac-Nitrate",hatch="//",linewidth=0)
+    #ax1.fill_between(xlist,y2list,y3list,alpha=0.1,color="white",label="cytosolic contribution",linewidth=0)
+    ax1.fill_between(xlist,y2list,y5list,alpha=0.7,color="blue",label="cyt-SUG",hatch="\\\\",linewidth=0)
+    ax1.fill_between(xlist,y5list,y7list,alpha=0.7,color="red",label="cyt-OA",hatch="\\\\",linewidth=0)
+    ax1.fill_between(xlist,y7list,y9list,alpha=0.7,color="green",label="cyt-AA",hatch="\\\\",linewidth=0)
+    ax1.fill_between(xlist,y9list,y12list,alpha=0.7,color="purple",label="cyt-Cation",hatch="\\\\",linewidth=0)
+    ax1.fill_between(xlist,y12list,y14list,alpha=0.7,color="magenta",label="cyt-Nitrate",hatch="\\\\",linewidth=0)
+    #ax1.fill_between(xlist,y9list,y10list,alpha=0.3,color="black",label="starch",hatch="\\\\",linewidth=0)
+    ax1.fill_between(xlist,ylist,y10list,alpha=0.7,color="orange",label="starch (GLC units)",linewidth=0)
+
+    handles, labels = plt.gca().get_legend_handles_labels()
+    labels.reverse()
+    handles.reverse()
+    lgd=plt.legend(handles,labels,bbox_to_anchor=(1.1, 1.02),fontsize=15)
+    plt.ylabel("Metabolite content (mmol)")
+    plt.xlabel("DPA (days)")
+    plt.xlim(DPA[1],DPA[10])
+    #plt.xlim(DPA[1],20)
+    #plt.ylim(0,1.2)
+    plt.show()
