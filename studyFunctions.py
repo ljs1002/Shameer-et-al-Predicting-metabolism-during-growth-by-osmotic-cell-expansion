@@ -1388,6 +1388,11 @@ def plotOsmoticContent(cobra_model2,SOL):
     import matplotlib.pyplot as plt
     from matplotlib.ticker import MultipleLocator
     import numpy as np
+
+    DPA = list(np.linspace(8,59,11))
+    for i in range(0,len(DPA)):
+        DPA[i]=round(DPA[i],1)
+
     plt.rcParams.update({'font.size': 15}) #sets a global fontsize
     plt.rcParams['xtick.major.size'] = 5 # adjusts tick line length and width
     plt.rcParams['xtick.major.width'] = 1
