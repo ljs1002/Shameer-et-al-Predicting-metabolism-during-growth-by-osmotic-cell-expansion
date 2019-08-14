@@ -1423,7 +1423,7 @@ def plotOsmoticContent(cobra_model2,SOL):
         met = cobra_model2.metabolites.get_by_id("WCO_"+str(i))
         rxn = cobra_model2.reactions.get_by_id("WCOsetter_tx"+str(i))
         #print(rxn.x)
-        y1 = rxn.metabolites.get(met)*solution2.fluxes.get(rxn.id)*-1
+        y1 = rxn.metabolites.get(met)*SOL.fluxes.get(rxn.id)*-1
         ylist.append(y1)
         y2 = 0
         y3 = 0
