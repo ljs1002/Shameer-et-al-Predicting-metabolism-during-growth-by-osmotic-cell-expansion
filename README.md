@@ -12,8 +12,12 @@ To run the scripts remotely without any installation, click on the binder icon b
 - Script2.ipynb - Modelling metabolism in dividing and expanding cells. (Figure 3)
 - Script3.ipynb - Processing data form Rontein et al 2002
 - Script4.ipynb - Fitting curves through experimentally determined fruit metabolite content using Colombie et al 2015 approach
-- Script5.ipynb - Developing constraints for phloem uptake rates
-- Script6.ipynb - Modelling fruit metabolism using a multiphase GrOE-FBA approach (Figure 5,6,7 and Table 1)
+- Script5.ipynb - Developing constraints for phloem uptake rates during fruit development
+- Script6.ipynb - Step by step process of creating a multiphase developing fruit GrOE-FBA model (Figure 5,6,7 and Table 1)
+- Script7.ipynb - Script for Figure 5 and 7 (with FVA).
+- Script8.ipynb - Script for Figure 5 and 7 (without FVA for Binder).
+- Script9.ipynb - Script for Table 1
+- Script10.ipynb - Script for Figure 6
 - Data/Data_OrganicSolutes.csv - Experimentally determined organic solute content (per fruit)
 - studyFunctions.py - all custom functions used in this study
 - FractionalCharges.csv - a list of all metabolites (including their different charge states) and their charges
