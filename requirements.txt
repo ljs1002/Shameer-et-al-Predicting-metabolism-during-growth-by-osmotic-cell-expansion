@@ -1,0 +1,6 @@
+cobra==0.14.0
+python-libsbml
+matplotlib
+scipy
+xlrd
+brokenaxes
