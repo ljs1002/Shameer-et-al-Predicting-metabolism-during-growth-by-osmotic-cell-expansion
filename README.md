@@ -4,7 +4,7 @@ DOI:[10.1101/731232](https://doi.org/10.1101/731232)
 Scripts used in the study has been presented in Jupyter notebooks.
 
 To run the scripts remotely without any installation, click on the binder icon below  
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/ljs1002/Shameer-et-al-Predicting-metabolism-during-growth-by-osmotic-cell-expansion/binder_version)  
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/ljs1002/Shameer-et-al-Predicting-metabolism-during-growth-by-osmotic-cell-expansion/master)  
   
  
 ## Index  
